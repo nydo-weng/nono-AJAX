@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>01. AJAX 概念和 axios 使用</title>
+  </head>
+  <body>
+    <div class="my-p"></div>
+    <!-- 1. 引入 axios 看库 -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+      // 2. 使用 axios 函数
+      axios({
+        url: 'http://hmajax.itheima.net/api/province',
+      }).then((result) => {
+        console.log(result);
+        // 好习惯: 多打印, 确认属性名字
+        console.log(result.data.list);
+        console.log(result.data.list.join('<br>'));
+        document.querySelector('.my-p').innerHTML = result.data.list.join('<br>');
+      });
+    </script>
+  </body>
+</html>
