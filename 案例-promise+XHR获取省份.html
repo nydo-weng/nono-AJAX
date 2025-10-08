@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>案例-promise+XHR获取省份.html</title>
+  </head>
+  <body>
+    <p class="my-p"></p>
+    <script>
+      const p = new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'https://hmajax.itheima.net/api/province123');
+        xhr.addEventListener('loadend', () => {
+          // xhr 如何判断响应成功还是失败的? 响应状态码
+          // 2xx 开头的都是成功响应状态码 xhr.status
+          if (xhr.status >= 200 && xhr.status < 300) {
+            resolve(JSON.parse(xhr.response));
+          } else {
+            reject(new Error(xhr.response));
+          }
+        });
+        xhr.send();
+      });
+
+      // 关联成功或失败函数, 做后续处理
+      p.then((result) => {
+        console.log('在 then() 里');
+        console.log(result);
+        document.querySelector('.my-p').innerHTML = result.list.join('<br>');
+      }).catch((err) => {
+        console.log('在 catch() 里');
+        // console.log(err);
+        // 错误对象要用 console.dir 详细打印
+        console.dir(err);
+        // 把错误信息插入到页面上
+        document.querySelector('.my-p').innerHTML = err.message;
+      });
+    </script>
+  </body>
+</html>
