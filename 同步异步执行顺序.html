@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>同步异步执行顺序.html</title>
+  </head>
+  <body>
+    <button class="btn">点我</button>
+    <script>
+      const result = 0 + 1;
+      console.log(result);
+      setTimeout(() => {
+        console.log(2);
+      }, 2000);
+      document.querySelector('.btn').addEventListener('click', () => {
+        console.log(3);
+      });
+      document.body.style.backgroundColor = 'pink';
+      console.log(4);
+    </script>
+  </body>
+</html>
