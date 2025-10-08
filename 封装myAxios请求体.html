@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>封装myAxios请求体</title>
+  </head>
+  <body>
+    <button class="reg-btn">注册用户</button>
+    <script>
+      /* 步骤:
+        1. myAxios 函数调用后, 判断 data 选线
+        2. 转换数据类型, 在 send 方法中发送
+        3. 使用自己封装的 myAxios 函数完成注册用户功能 */
+
+      function myAxios(config) {
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+
+          if (config.params) {
+            const paramsObj = new URLSearchParams(config.params);
+            const queryString = paramsObj.toString();
+            config.url += `?${queryString}`;
+          }
+
+          xhr.open(config.method || 'GET', config.url);
+          xhr.addEventListener('loadend', () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              resolve(JSON.parse(xhr.response));
+            } else {
+              reject(new Error(xhr.response));
+            }
+          });
+
+          // 1. 判断有 data 选项, 携带请求体
+          if (config.data) {
+            // 2. 转换数据类型, 在 send 中发送
+            const jsonStr = JSON.stringify(config.data);
+            // 设置请求头, 告诉服务器, 请求体数据类型为 json 格式
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(jsonStr);
+            return;
+          }
+          xhr.send();
+        });
+      }
+
+      document.querySelector('.reg-btn').addEventListener('click', () => {
+        // 3. 使用自己封装的 myAxios 函数完成注册用户功能
+        myAxios({
+          url: 'https://hmajax.itheima.net/api/register',
+          method: 'POST',
+          // 这里知道了, 为什么传给 axios 是一个对象, 但是发给服务器实际是一个 JSON, 因为在方法内部做了转换
+          // JSON.stringify(config.data)
+          data: {
+            username: 'itheima999',
+            password: '7654321',
+          },
+        })
+          .then((result) => {
+            console.log(result);
+            alert('注册成功, 请登录!');
+          })
+          .catch((err) => {
+            console.dir(err);
+            alert('注册失败, 请稍后重试!');
+          });
+      });
+    </script>
+  </body>
+</html>
