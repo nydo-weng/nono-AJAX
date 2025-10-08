@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>promise - intro</title>
+  </head>
+  <body>
+    <script>
+      // 1. 创建 promise 对象
+      const p = new Promise((resolve, reject) => {
+        // 2. 执行异步代码
+        setTimeout(() => {
+          // resolve('模拟 AJAX 请求 - 成功结果');
+          reject(new Error('模拟 AJAX 请求 - 失败结果'));
+        }, 2000);
+      });
+
+      // 3. 获取结果
+      p.then((result) => {
+        console.log(result);
+      }).catch((err) => {
+        console.log(err);
+      });
+    </script>
+  </body>
+</html>
