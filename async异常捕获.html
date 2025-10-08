@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>async异常捕获.html</title>
+  </head>
+  <body>
+    <p>省份:</p>
+    <div class="province"></div>
+    <p>城市:</p>
+    <div class="city"></div>
+    <p>地区:</p>
+    <div class="area"></div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+      async function getData() {
+        // 1. try 包裹可能产生错误的代码
+        try {
+          const pObj = await axios({ url: 'https://hmajax.itheima.net/api/province' });
+          const pname = pObj.data.list[0];
+          const cObj = await axios({
+            url: 'https://hmajax.itheima.net/api/city',
+            params: { pname },
+          });
+          const cname = cObj.data.list[0];
+          const aObj = await axios({
+            url: 'https://hmajax.itheima.net/api/area1',
+            params: { pname, cname },
+          });
+          const areaName = aObj.data.list[0];
+
+          document.querySelector('.province').innerHTML = pname;
+          document.querySelector('.city').innerHTML = cname;
+          document.querySelector('.area').innerHTML = areaName;
+        } catch (e) {
+          // 2. 接着调用 catch 块, 接收错误信息
+          // 如果 try 里某行代码报错后, try 中剩余的代码不会执行了
+          console.dir(e);
+        }
+      }
+
+      getData();
+    </script>
+  </body>
+</html>
