@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>回调地狱</title>
+  </head>
+  <body>
+    <p>省份:</p>
+    <div class="province"></div>
+    <p>城市:</p>
+    <div class="city"></div>
+    <p>地区:</p>
+    <div class="area"></div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      axios({ url: 'http://hmajax.itheima.net/api/province' })
+        .then((result) => {
+          const pname = result.data.list[0];
+          document.querySelector('.province').innerHTML = pname;
+          axios({ url: 'http://hmajax.itheima.net/api/city', params: { pname } }).then((result) => {
+            const cname = result.data.list[0];
+            document.querySelector('.city').innerHTML = cname;
+            axios({ url: 'http://hmajax.itheima.net/api/area', params: { pname, cname } }).then(
+              (result) => {
+                document.querySelector('.area').innerHTML = result.data.list.join('<br>');
+              },
+            );
+          });
+        })
+        .catch((error) => {
+          // 只能捕获最外层的异常, 内部的异常无法补货
+          console.log('捕获到了异常');
+          console.dir(error);
+        });
+    </script>
+  </body>
+</html>
