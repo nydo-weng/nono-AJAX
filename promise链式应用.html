@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>promise链式应用.html</title>
+  </head>
+  <body>
+    <p>省份:</p>
+    <div class="province"></div>
+    <p>城市:</p>
+    <div class="city"></div>
+    <p>地区:</p>
+    <div class="area"></div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+      let pname = '';
+      // 1. 得到 - 获取省份 Promise 对象
+      axios({ url: 'https://hmajax.itheima.net/api/province' })
+        .then((result) => {
+          pname = result.data.list[0];
+          document.querySelector('.province').innerHTML = pname;
+          // 2.得到 - 获取城市 Promise 对象
+          return axios({ url: 'https://hmajax.itheima.net/api/city', params: { pname } });
+        })
+        .then((result) => {
+          const cname = result.data.list[0];
+          document.querySelector('.city').innerHTML = cname;
+          // 3. 得到 - 获取地区 promise 对象
+          return axios({ url: 'https://hmajax.itheima.net/api/area', params: { pname, cname } });
+        })
+        .then((result) => {
+          const areaName = result.data.list[0];
+          document.querySelector('.area').innerHTML = areaName;
+        });
+    </script>
+  </body>
+</html>
