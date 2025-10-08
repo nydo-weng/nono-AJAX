@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>11. 案例-登录</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+  <style>
+    :root {
+      font-size: 15px;
+    }
+
+    body {
+      padding-top: 15px;
+    }
+
+    .alert {
+      transition: .5s;
+      opacity: 0;
+    }
+
+    .alert.show {
+      opacity: 1;
+    }
+
+    
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h3>欢迎-登录</h3>
+    <div class="alert" role="alert">
+      提示消息
+    </div>
+    <div class="form_wrap">
+      <form>
+        <div class="mb-3">
+          <label for="username" class="form-label">账号</label>
+          <input type="text" class="form-control username">
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">密码</label>
+          <input type="password" class="form-control password">
+        </div>
+        <button type="button" class="btn btn-primary btn-login">
+          登录
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 确定 URL网址 和 参数说明
+  查询某个省内某个城市的所有地区: http://hmajax.itheima.net/api/area
+  参数名:
+    pname: 省份名字或直辖市名字, 比如北京, 福建省, 辽宁省
+    cname: 城市名字, 比如北京市, 厦门市, 大连市-->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  
+  <script>
+    // 2.1 获取提示框
+    const myAlert = document.querySelector(".alert");
+    // 2..2 封装提示框函数, 重复调用, 满足提示需求
+    // 1. 显示提示框
+    // 2. 不同提示文字msg, 和成功绿色失败红色isSuccess
+    // 3. 过 2 秒后, 让提示框自动消失
+    function alertFn(msg, isSuccess) {
+      // 1 > 显示提示框
+      myAlert.classList.add("show");
+
+      // 2 > 设置提示文字和颜色
+      myAlert.innerHTML = msg;
+      const bgStyle = isSuccess ? "alert-success" : "alert-danger";
+      myAlert.classList.add(bgStyle);
+
+      // 3 > 过 2 秒隐藏
+      setTimeout(() => {
+        myAlert.classList.remove("show");
+        myAlert.classList.remove(bgStyle);
+      }, 2000);
+    }
+
+    // 1.1 登录-点击事件
+    document.querySelector(".btn-login").addEventListener("click",  () => {
+      //  1.2 获取用户名和密码
+      const username = document.querySelector(".username").value.trim();
+      const password = document.querySelector(".password").value.trim();
+      // console.log(username, password);
+      // 1.3 判断长度
+      if (username.length < 8) {
+        alertFn("用户名长度不够8位", false);
+        console.log("用户名长度不够8位");
+        return;
+      }
+      if (password.length < 6) {
+        alertFn("密码长度不够6位", false);
+        console.log("密码长度不够6位");
+        return;
+      }
+      // 1.4 发送登录请求
+      axios({
+        url: 'https://hmajax.itheima.net/api/login',
+        method: "POST",
+        data: {
+          username,
+          password,
+        }
+      }).then(result => {
+        alertFn(result.data.message, true);
+        console.log(result.data.message);
+      }).catch(err => {
+        alertFn(err.response.data.message, false);
+        console.log(err.response.data.message);
+      })
+
+    });
+  </script>
+</html>
