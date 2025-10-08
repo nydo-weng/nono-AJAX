@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>promise - 三种状态</title>
+  </head>
+  <body>
+    <script>
+      // 1. 创建 promise 对象 (pending - 待定状态)
+      const p = new Promise((resolve, reject) => {
+        // 由此可见, 当 Promise 对象创建时, 内部代码会立刻执行
+        console.log('Promise 对象内开始执行');
+        // 2. 执行异步代码
+        setTimeout(() => {
+          // Promisestate: fulfilled - 成功状态, 调用 then 的回调
+          // resolve() => fulfilled状态 - 已兑现 => then()
+          resolve('模拟 AJAX 请求 - 成功结果');
+
+          console.log('Promise 对象内结束执行');
+
+          // Promisestate: rejected - 失败状态, 调用 catch 的回调
+          // reject() => rejected状态 - 已拒绝 => catch()
+          reject(new Error('模拟 AJAX 请求 - 失败结果'));
+
+          console.log('Promise 对象内结束执行, reject() 之后');
+
+          // 如果 resolve 和 reject 都调用, 只有第一次调用有效
+        }, 2000);
+      });
+
+      // PromiseState: pending-待定状态
+      console.log(p);
+
+      // 3. 获取结果
+      p.then((result) => {
+        console.log(result);
+      }).catch((err) => {
+        console.log(err);
+      });
+    </script>
+  </body>
+</html>
