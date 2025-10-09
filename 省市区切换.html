@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>省市区切换.html</title>
+  </head>
+  <body>
+    <h3>请选择省份：</h3>
+    <select id="province">
+      <option value="">-- 请选择省份 --</option>
+    </select>
+
+    <h3>请选择城市：</h3>
+    <select id="city">
+      <option value="">-- 请选择城市： --</option>
+    </select>
+
+    <h3>请选择市区：</h3>
+    <select id="area">
+      <option value="">-- 请选择市区： --</option>
+    </select>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+      // 1. 页面加载完后, 发请求, 去获取省份列表, 然后放到 select #province 里
+      axios({
+        url: 'https://hmajax.itheima.net/api/province',
+      }).then((result) => {
+        // console.log(result);
+        const pList = result.data.list;
+        // 2. 遍历 pList, 生成 option 字符串
+        let str = '<option value="">-- 请选择省份 --</option>';
+        str =
+          str +
+          pList
+            .map((item) => {
+              return `<option value="${item}">${item}</option>`;
+            })
+            .join('');
+        document.querySelector('#province').innerHTML = str;
+      });
+
+      // 3. 监听省份 select 的 change 事件, 因为只有当用户选择省份后, 才能去获取城市列表
+      // 但是好像确实没有必要放在 then 里, 因为不管怎样, 用户都可以选择省份,
+      // 7. 省份变化后, 清空城市下拉列表, 地区下拉列表用城市下拉列表去控制 (! 不行, 不能用城市下拉菜单去控制, 因为那不是用户交互, 不会触发事件, 所以还是要主动清除)
+      document.querySelector('#province').addEventListener('change', async (e) => {
+        document.querySelector('#city').innerHTML = '<option value="">-- 请选择城市 --</option>';
+        document.querySelector('#area').innerHTML = '<option value="">-- 请选择市区 --</option>';
+        // console.log(e.target.value);
+        // 4. 发请求, 获取城市列表
+        const result = await axios({
+          url: 'https://hmajax.itheima.net/api/city',
+          params: { pname: e.target.value },
+        });
+        // console.log(result);
+        const cList = result.data.list;
+        let str = '<option value="">-- 请选择城市 --</option>';
+        str = str + cList.map((item) => `<option value="${item}">${item}</option>`).join('');
+        document.querySelector('#city').innerHTML = str;
+      });
+
+      // 5. 监听城市 select 的 change 事件, 因为只有当用户选择城市后, 才能去获取地区列表
+      // 8. 城市变化后, 清空地区下拉列表
+      document.querySelector('#city').addEventListener('change', function () {
+        document.querySelector('#area').innerHTML = '<option value="">-- 请选择市区 --</option>';
+        // console.log(this.value);
+        const pname = document.querySelector('#province').value;
+        const cname = this.value;
+        // 6. 发请求, 获取地区列表
+        axios({ url: 'https://hmajax.itheima.net/api/area', params: { pname, cname } }).then(
+          (result) => {
+            // console.log(result);
+            const aList = result.data.list;
+            let str = '<option value="">-- 请选择市区 --</option>';
+            str = str + aList.map((item) => `<option value="${item}">${item}</option>`).join('');
+            document.querySelector('#area').innerHTML = str;
+          },
+        );
+      });
+    </script>
+  </body>
+</html>
