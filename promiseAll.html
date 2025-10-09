@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>promiseAll.html</title>
+  </head>
+  <body>
+    <ul class="my-ul"></ul>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+      // 1. 请求城市天气, 得到 Promise 对象
+      const bjPromise = axios({
+        url: 'http://hmajax.itheima.net/api/weather',
+        params: { city: '110100' },
+      });
+      const shPromise = axios({
+        url: 'http://hmajax.itheima.net/api/weather',
+        params: { city: '310100' },
+      });
+      const gzPromise = axios({
+        url: 'http://hmajax.itheima.net/api/weather',
+        params: { city: '440100' },
+      });
+      const szPromise = axios({
+        url: 'http://hmajax.itheima.net/api/weather',
+        params: { city: '440300' },
+      });
+
+      // 2. 使用 Promise.all, 合并多个 Promise 对象
+      const p = Promise.all([bjPromise, shPromise, gzPromise, szPromise]);
+      p.then((result) => {
+        // 注意, 结果数组顺序和合并时顺序是一致的
+        console.log(result);
+        const htmlStr = result
+          .map((item) => {
+            return `<li>${item.data.data.area} --- ${item.data.data.weather}</li>`;
+          })
+          .join('');
+        document.querySelector('.my-ul').innerHTML = htmlStr;
+      }).catch((err) => {
+        console.dir(err);
+      });
+    </script>
+  </body>
+</html>
